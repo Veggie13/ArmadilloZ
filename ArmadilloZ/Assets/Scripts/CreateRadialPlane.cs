@@ -4,22 +4,22 @@ using UnityEngine;
 
 public class CreateRadialPlane : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
+	MeshFilter mf;
+    const int radius = 10;
+    const float rad60 = 1.047197f;
+    const float edgesize = 0.25f;
+    float triheight = edgesize * Mathf.Sin(rad60);
+    int numvert = 0;
 
-		MeshFilter mf = GetComponent<MeshFilter>();
+    // Use this for initialization
+    void Start () {
+
 		Mesh mesh = new Mesh ();
+		mf = GetComponent<MeshFilter> ();
 		mf.mesh = mesh;
-		int radius = 100;
-		float rad60 = 1.047197f;
-	    float edgesize = 0.25f;
-		float triheight = edgesize * Mathf.Sin (rad60);
-		int numvert = 0;
-		int i;
-		float amplitude = 1f;
-		float kmultiplier = 10f;
 
-		for (i = 0; i <= radius; i++)
+        int i;
+        for (i = 0; i <= radius; i++)
 			numvert = numvert + i;
 
 		numvert = numvert * 6 + 1;
@@ -36,9 +36,7 @@ public class CreateRadialPlane : MonoBehaviour {
 			{
 				float x = (col + Mathf.Abs (radius - row) / 2f - radius) * edgesize;
 				float z = (radius - row) * triheight;
-				float s = Mathf.Sqrt (x * x + z * z);
-				float y = amplitude * Mathf.Cos (kmultiplier * s);
-				vertices [i] = new Vector3 (x, y, z);
+				vertices [i] = new Vector3 (x, WaveField.GetAmplitude(x, z), z);
 				i++;
 
 			}
@@ -90,11 +88,26 @@ public class CreateRadialPlane : MonoBehaviour {
 
 		mesh.vertices = vertices;
 		mesh.triangles = triangles;
+		mesh.RecalculateNormals();
 		transform.gameObject.AddComponent<MeshCollider>();
 		transform.GetComponent<MeshCollider>().sharedMesh = mesh;
 
 	}
 
+	void Update () {
 
+		Mesh mesh = mf.mesh;
+		for (int i = 0; i < mesh.vertices.Length; i++) 
+		{
+			float x = mesh.vertices[i].x;
+			float z = mesh.vertices[i].z;
+			mesh.vertices [i] = new Vector3 (x, WaveField.GetAmplitude(x, z), z);
+		}
+
+		//mesh.vertices = vertices;
+		mesh.RecalculateNormals();
+		GetComponent<MeshCollider> ().sharedMesh = null;
+		GetComponent<MeshCollider> ().sharedMesh = mesh;
+	}
 }
 
