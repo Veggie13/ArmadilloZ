@@ -1,17 +1,17 @@
 Priority 1
 ----------
 - 
-- Rolling character (still)
-- Standing character (still)
-- Control Input
+- 
+- 
+- 
 - 
 - Rules
 - Isometric View
 
 Priority 2
 ----------
-- Standing character attacking (still)
-- Standing character walking (still)
+-
+- 
 - Sound effects
 - Arena art
 
@@ -35,7 +35,13 @@ Priority 4
 
 
 Corey: Wave physics
-Nolan:
+Nolan: Control Input
 Peter: Circular stage w/ wave medium
-Liz:
+Liz: Rolling character (still), Standing character (still), Standing character attacking (still), Standing character walking (still)
 Adam:
+
+Done
+----
+- 
+- 
+- 
