@@ -1,10 +1,10 @@
 Priority 1
 ----------
-- Circular stage w/ wave medium
+- 
 - Rolling character (still)
 - Standing character (still)
 - Control Input
-- Wave physics
+- 
 - Rules
 - Isometric View
 
@@ -33,8 +33,8 @@ Priority 4
 
 
 
-Corey:
+Corey: Wave physics
 Nolan:
-Peter:
+Peter: Circular stage w/ wave medium
 Liz:
 Adam:
