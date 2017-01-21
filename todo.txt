@@ -1,0 +1,40 @@
+Priority 1
+----------
+- Circular stage w/ wave medium
+- Rolling character (still)
+- Standing character (still)
+- Control Input
+- Wave physics
+- Rules
+- Isometric View
+
+Priority 2
+----------
+- Standing character attacking (still)
+- Standing character walking (still)
+- Sound effects
+- Arena art
+
+Priority 3
+----------
+- Rolling character (animated)
+- Standing character (animated)
+- Standing character attacking (animated)
+- Standing character walking (animated)
+- Music
+- Power-ups
+- Level effects
+
+Priority 4
+----------
+- Cool intro
+- Character customization
+- Super Armadillos
+
+
+
+Corey:
+Nolan:
+Peter:
+Liz:
+Adam:
