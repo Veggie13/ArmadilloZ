@@ -27,6 +27,7 @@ Priority 3
 
 Priority 4
 ----------
+- Particle effects
 - Cool intro
 - Character customization
 - Super Armadillos
