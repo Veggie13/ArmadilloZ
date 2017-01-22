@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -10,6 +11,15 @@ public static class WaveField {
     public abstract class Region2
     {
         public abstract bool Contains(Vector2 point);
+    }
+
+    public class Everywhere2 : Region2
+    {
+        public static readonly Everywhere2 Instance = new Everywhere2();
+        public override bool Contains(Vector2 point)
+        {
+            return true;
+        }
     }
 
     //class Polygon2 : Region2
@@ -164,6 +174,40 @@ public static class WaveField {
         }
     }
 
+    public class BackgroundRegion : WaveForceRegion
+    {
+        public static readonly BackgroundRegion Instance = new BackgroundRegion();
+
+        public override Region2 Region
+        {
+            get
+            {
+                return Everywhere2.Instance;
+            }
+        }
+
+        public override float GetAmplitude(Vector2 pos)
+        {
+            return 0f;
+        }
+
+        protected override Vector2 getVelocity(Vector2 pos)
+        {
+            return Vector2.zero;
+        }
+
+        public override float GetWaveValue(Vector2 pos)
+        {
+            float shortRadius = 25f * Mathf.Sin(Mathf.PI / 3);
+            return (1f - pos.SqrMagnitude() / shortRadius / shortRadius);
+        }
+
+        public override bool Tick(float dt)
+        {
+            return true;
+        }
+    }
+
     public class Movable
     {
         public Rigidbody Body;
@@ -184,13 +228,18 @@ public static class WaveField {
         public float DragCoefficient;
         public float StopSpeed;
 
+        private Vector2 curForce = new Vector2();
+
         public void AcceptForce(Vector2 force, float dt)
         {
-            Body.AddForce(new Vector3(force.x, 0f, force.y), ForceMode.Acceleration);
+            curForce += force;
         }
 
         public void Tick(float dt)
         {
+            Body.AddForce(new Vector3(curForce.x, 0f, curForce.y), ForceMode.Acceleration);
+            curForce = Vector2.zero;
+
             var planeVelocity = new Vector2(Body.velocity.x, Body.velocity.z);
             planeVelocity *= Mathf.Pow(DragCoefficient, dt);
             if (planeVelocity.magnitude < StopSpeed)
@@ -204,7 +253,10 @@ public static class WaveField {
     public class ForceManager
     {
         public List<Movable> Objects = new List<Movable>();
-        public List<WaveForceRegion> Regions = new List<WaveForceRegion>();
+        public List<WaveForceRegion> Regions = new List<WaveForceRegion>()
+        {
+            BackgroundRegion.Instance
+        };
 
         public void Tick(float dt)
         {
