@@ -9,9 +9,14 @@ public class PlayerController : MonoBehaviour
     public int walkSpeed;
     public int rollSpeed;
 
+    private AudioSource feetAudio;
+    private AudioSource rollAudio;
+    private AudioSource poundAudio;
     private Rigidbody rb;
     private bool isGrounded = true;
     private bool isPounding = false;
+    private bool isRolling = false;
+    private bool isWalking = false;
     private int speed;
     private Vector2 lastFacing;
     private WaveField.Movable movable;
@@ -19,6 +24,9 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        feetAudio = GameObject.Find("Feet" + player).GetComponent<AudioSource>();
+        rollAudio = GameObject.Find("Roll" + player).GetComponent<AudioSource>();
+        poundAudio = GameObject.Find("Pound" + player).GetComponent<AudioSource>();
         speed = walkSpeed;
         lastFacing = new Vector2(0f, -1f);
         movable = new WaveField.Movable()
@@ -46,10 +54,12 @@ public class PlayerController : MonoBehaviour
         float moveXAxis = Input.GetAxis("L_XAxis_" + player);
         float moveZAxis = Input.GetAxis("L_YAxis_" + player);
         Vector2 moveVector = new Vector2(moveXAxis, moveZAxis);
+        bool moveAudio = false;
         if (moveVector.magnitude > 0.2)
         {
             lastFacing = moveVector.normalized;
             movable.DragActive = false;
+            moveAudio = true;
         }
         else
         {
@@ -109,6 +119,9 @@ public class PlayerController : MonoBehaviour
                     Attenuation = 0.7f,
                     MaxRadius = 1f
                 });
+
+                rollAudio.enabled = true;
+                feetAudio.enabled = false;
             }
             else
             {
@@ -137,6 +150,9 @@ public class PlayerController : MonoBehaviour
                         MaxRadius = 5f
                     });
                 }
+
+                rollAudio.enabled = false;
+                feetAudio.enabled = moveAudio;
             }
 
             if (Input.GetButton("Y_" + player))
@@ -154,6 +170,9 @@ public class PlayerController : MonoBehaviour
                 rb.velocity = new Vector3(0.0f, 0.0f, 0.0f);
                 isPounding = true;
             }
+
+            rollAudio.enabled = false;
+            feetAudio.enabled = false;
         }
         Vector2 targetPlaneVelocity = new Vector2(moveXAxis, moveZAxis) * speed;
         Vector2 currPlaneVelocity = new Vector2(rb.velocity.x, rb.velocity.z);
@@ -191,6 +210,7 @@ public class PlayerController : MonoBehaviour
                     MaxRadius = 2.5f
                 });
                 isPounding = false;
+                poundAudio.Play();
             }
         }
     }
