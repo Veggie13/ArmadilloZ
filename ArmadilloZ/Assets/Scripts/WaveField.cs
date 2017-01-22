@@ -202,8 +202,8 @@ public static class WaveField {
 
         public override float GetWaveValue(Vector2 pos)
         {
-            float shortRadius = 25f * Mathf.Sin(Mathf.PI / 3);
-            return (1f - pos.SqrMagnitude() / shortRadius / shortRadius) + 0.05f - 0.1f * Mathf.PerlinNoise(pos.x, pos.y);
+            float shortRadius = 50f * 0.125f * Mathf.Sin(Mathf.PI / 3);
+            return (1f - pos.SqrMagnitude() / shortRadius / shortRadius) + 0.1f - 0.2f * Mathf.PerlinNoise(pos.x, pos.y);
         }
 
         public override bool Tick(float dt)
