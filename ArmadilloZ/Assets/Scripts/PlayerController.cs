@@ -11,19 +11,24 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody rb;
     private bool isGrounded = true;
+    private bool isPounding = false;
     private int speed;
+    private Vector2 lastFacing;
+    private WaveField.Movable movable;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         speed = walkSpeed;
-
-        WaveField.forceMgr.Objects.Add(new WaveField.Movable()
+        lastFacing = new Vector2(0f, -1f);
+        movable = new WaveField.Movable()
         {
             Body = rb,
-            DragCoefficient = 0.7f,
-            StopSpeed = 0.05f
-        });
+            DragCoefficient = 0.5f,
+            StopSpeed = 2f
+        };
+
+        WaveField.forceMgr.Objects.Add(movable);
     }
 
     void FixedUpdate()
@@ -40,6 +45,16 @@ public class PlayerController : MonoBehaviour
 
         float moveXAxis = Input.GetAxis("L_XAxis_" + player);
         float moveZAxis = Input.GetAxis("L_YAxis_" + player);
+        Vector2 moveVector = new Vector2(moveXAxis, moveZAxis);
+        if (moveVector.magnitude > 0.2)
+        {
+            lastFacing = moveVector.normalized;
+            movable.DragActive = false;
+        }
+        else
+        {
+            movable.DragActive = true;
+        }
 
         float moveYAxis = 0.0f;
         if(isGrounded)
@@ -50,7 +65,7 @@ public class PlayerController : MonoBehaviour
                 isGrounded = false;
             }
 
-            if (Input.GetButton("X_" + player))
+            if (Input.GetButton("X_" + player) && moveVector.magnitude > 0.2)
             {
                 speed = rollSpeed;
                 Vector2 planeVelocity = new Vector2(rb.velocity.x, rb.velocity.z);
@@ -70,7 +85,7 @@ public class PlayerController : MonoBehaviour
                     },
                     Center = new Vector2(rb.position.x, rb.position.z),
                     Speed = 2f,
-                    UnitAmplitude = 1f,
+                    UnitAmplitude = 2f,
                     UnitWaveAmplitude = 0.25f,
                     Wavelength = 0.5f,
                     Attenuation = 0.7f,
@@ -88,7 +103,7 @@ public class PlayerController : MonoBehaviour
                     },
                     Center = new Vector2(rb.position.x, rb.position.z),
                     Speed = 2f,
-                    UnitAmplitude = 1f,
+                    UnitAmplitude = 2f,
                     UnitWaveAmplitude = 0.25f,
                     Wavelength = 0.5f,
                     Attenuation = 0.7f,
@@ -98,6 +113,30 @@ public class PlayerController : MonoBehaviour
             else
             {
                 speed = walkSpeed;
+
+                if (Input.GetButtonDown("B_" + player))
+                {
+                    float blastBearing = Mathf.Atan2(lastFacing.y, lastFacing.x);
+                    WaveField.forceMgr.Regions.Add(new WaveField.RadialWaveForceRegion()
+                    {
+                        AnnularRegion = new global::WaveField.Annulus2()
+                        {
+                            Center = new Vector2(rb.position.x, rb.position.z),
+                            MinRadius = 0.25f,
+                            InnerRadius = -0.5f,
+                            OuterRadius = 0.5f,
+                            MinArc = blastBearing - 0.3f,
+                            MaxArc = blastBearing + 0.3f
+                        },
+                        Center = new Vector2(rb.position.x, rb.position.z),
+                        Speed = 4f,
+                        UnitAmplitude = 4f,
+                        UnitWaveAmplitude = 0.125f,
+                        Wavelength = 0.25f,
+                        Attenuation = 0.5f,
+                        MaxRadius = 5f
+                    });
+                }
             }
 
             if (Input.GetButton("Y_" + player))
@@ -110,28 +149,10 @@ public class PlayerController : MonoBehaviour
             if (Input.GetButton("B_" + player))
             {
                 moveXAxis = 0.0f;
-                moveYAxis = -300.0f;
+                moveYAxis = -500.0f;
                 moveZAxis = 0.0f;
                 rb.velocity = new Vector3(0.0f, 0.0f, 0.0f);
-
-                WaveField.forceMgr.Regions.Add(new WaveField.RadialWaveForceRegion()
-                {
-                    AnnularRegion = new global::WaveField.Annulus2()
-                    {
-                        Center = new Vector2(rb.position.x, rb.position.z),
-                        InnerRadius = 0.25f,
-                        OuterRadius = 0.5f,
-                        MaxArc = Mathf.PI * 2f
-                    },
-                    Center = new Vector2(rb.position.x, rb.position.z),
-                    Speed = 6f,
-                    UnitAmplitude = 2f,
-                    UnitWaveAmplitude = 0.5f,
-                    Wavelength = 0.5f,
-                    Attenuation = 1f,
-                    MaxRadius = 2.5f
-                });
-                isGrounded = true;
+                isPounding = true;
             }
         }
         Vector2 targetPlaneVelocity = new Vector2(moveXAxis, moveZAxis) * speed;
@@ -147,6 +168,30 @@ public class PlayerController : MonoBehaviour
         if(collision.gameObject.name == "Terrain")
         {
             isGrounded = true;
+            if (isPounding)
+            {
+                var velocity = rb.velocity;
+                velocity.y = 0f;
+                rb.velocity = velocity;
+                WaveField.forceMgr.Regions.Add(new WaveField.RadialWaveForceRegion()
+                {
+                    AnnularRegion = new global::WaveField.Annulus2()
+                    {
+                        Center = new Vector2(rb.position.x, rb.position.z),
+                        InnerRadius = 0.25f,
+                        OuterRadius = 0.5f,
+                        MaxArc = Mathf.PI * 2f
+                    },
+                    Center = new Vector2(rb.position.x, rb.position.z),
+                    Speed = 6f,
+                    UnitAmplitude = 6f,
+                    UnitWaveAmplitude = 0.5f,
+                    Wavelength = 0.5f,
+                    Attenuation = 1f,
+                    MaxRadius = 2.5f
+                });
+                isPounding = false;
+            }
         }
     }
 
@@ -155,6 +200,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.name == "Terrain")
         {
             isGrounded = false;
+            isPounding = false;
         }
     }
 }

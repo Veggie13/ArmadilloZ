@@ -46,16 +46,21 @@ public static class WaveField {
     public class Annulus2 : Region2
     {
         public Vector2 Center;
+        public float MinRadius;
         public float InnerRadius;
         public float OuterRadius;
         public float MinArc;
         public float MaxArc;
+        public float InsideRadius
+        {
+            get { return Mathf.Max(MinRadius, InnerRadius); }
+        }
 
         public override bool Contains(Vector2 point)
         {
             var radial = point - Center;
             float radius = radial.magnitude;
-            if (!(InnerRadius < radius && radius < OuterRadius)) return false;
+            if (!(InsideRadius < radius && radius < OuterRadius)) return false;
             float bearing = Mathf.Atan2(radial.y, radial.x);
             double normBearing = (bearing - MinArc + Mathf.PI * 4) % (Mathf.PI * 2);
             double arc = (MaxArc - MinArc + Mathf.PI * 4) % (Mathf.PI * 2);
@@ -182,6 +187,8 @@ public static class WaveField {
     {
         public static readonly BackgroundRegion Instance = new BackgroundRegion();
 
+        public bool ApplyNoise = false;
+
         public override Region2 Region
         {
             get
@@ -203,7 +210,7 @@ public static class WaveField {
         public override float GetWaveValue(Vector2 pos)
         {
             float shortRadius = 50f * 0.125f * Mathf.Sin(Mathf.PI / 3);
-            return (1f - pos.SqrMagnitude() / shortRadius / shortRadius) + 0.1f - 0.2f * Mathf.PerlinNoise(pos.x, pos.y);
+            return (1f - pos.SqrMagnitude() / shortRadius / shortRadius) + (ApplyNoise ? (0.1f - 0.2f * Mathf.PerlinNoise(pos.x, pos.y)) : 0f);
         }
 
         public override bool Tick(float dt)
@@ -231,6 +238,7 @@ public static class WaveField {
         }
         public float DragCoefficient;
         public float StopSpeed;
+        public bool DragActive = true;
 
         private Vector2 curForce = new Vector2();
 
@@ -244,13 +252,16 @@ public static class WaveField {
             Body.AddForce(new Vector3(curForce.x, 0f, curForce.y), ForceMode.Acceleration);
             curForce = Vector2.zero;
 
-            var planeVelocity = new Vector2(Body.velocity.x, Body.velocity.z);
-            planeVelocity *= Mathf.Pow(DragCoefficient, dt);
-            if (planeVelocity.magnitude < StopSpeed)
+            if (DragActive)
             {
-                planeVelocity = Vector2.zero;
+                var planeVelocity = new Vector2(Body.velocity.x, Body.velocity.z);
+                planeVelocity *= Mathf.Pow(DragCoefficient, dt);
+                if (planeVelocity.magnitude < StopSpeed)
+                {
+                    planeVelocity = Vector2.zero;
+                }
+                Body.velocity = new Vector3(planeVelocity.x, Body.velocity.y, planeVelocity.y);
             }
-            Body.velocity = new Vector3(planeVelocity.x, Body.velocity.y, planeVelocity.y);
         }
     }
 
@@ -267,14 +278,16 @@ public static class WaveField {
             foreach (var region in Regions.ToArray())
             {
                 if (!region.Tick(dt)) Regions.Remove(region);
+                else
+                {
+                    foreach (var obj in Objects)
+                    {
+                        obj.AcceptForce(region.GetForce(obj.Position, obj.Velocity), dt);
+                    }
+                }
             }
             foreach (var obj in Objects)
             {
-                foreach (var region in Regions)
-                {
-                    obj.AcceptForce(region.GetForce(obj.Position, obj.Velocity), dt);
-                }
-
                 obj.Tick(dt);
             }
         }
