@@ -24,23 +24,29 @@ public class ArmadilloAnimation : MonoBehaviour
 
         float faceBearingGrad = (Mathf.Atan2(facing.y, facing.x) / Mathf.PI + 2f) % 2f;
 
+        bool wasRolling = animator.GetBool("IsRolling");
         animator.SetBool("IsRolling", rolling);
 
+        int faceDirection = animator.GetInteger("DirectionState");
         if (facing.magnitude > 0.1f)
         {
-            int faceDirection;
             if (rolling)
             {
                 var dirs = new[] { 0, 7, 5, 4, 7, 5 };
                 faceDirection = dirs[Mathf.RoundToInt(3f * faceBearingGrad + 6f) % 6];
+                //faceDirection = Mathf.RoundToInt(4f * faceBearingGrad + 8f) % 8;
             }
             else
             {
                 var dirs = new[] { 3, 2, 1, 7, 6, 5 };
                 faceDirection = dirs[(Mathf.RoundToInt(3f * (faceBearingGrad - 0.5f) + 6f) + 1) % 6];
             }
-            animator.SetInteger("DirectionState", faceDirection);
         }
+        else if (wasRolling && !rolling)
+        {
+            faceDirection = 5;
+        }
+        animator.SetInteger("DirectionState", faceDirection);
 
         if (facing.magnitude < 0.2)
         {
