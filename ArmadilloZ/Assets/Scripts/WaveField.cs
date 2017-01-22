@@ -47,8 +47,8 @@ public static class WaveField {
             float radius = radial.magnitude;
             if (!(InnerRadius < radius && radius < OuterRadius)) return false;
             float bearing = Mathf.Atan2(radial.y, radial.x);
-            double normBearing = (bearing - MinArc + Mathf.PI * 2) % (Mathf.PI * 2);
-            double arc = (MaxArc - MinArc + Mathf.PI * 2) % (Mathf.PI * 2);
+            double normBearing = (bearing - MinArc + Mathf.PI * 4) % (Mathf.PI * 2);
+            double arc = (MaxArc - MinArc + Mathf.PI * 4) % (Mathf.PI * 2);
             return (arc == 0f) || (normBearing < arc);
         }
     }

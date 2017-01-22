@@ -133,8 +133,8 @@ public class CreateRadialPlane : MonoBehaviour {
                         Center = new Vector2(hit.point.x, hit.point.z),
                         InnerRadius = 2f,
                         OuterRadius = 4f,
-                        MinArc = Mathf.PI,
-                        MaxArc = Mathf.PI * (2f - 0.0f)
+                        MinArc = Mathf.PI * 0.2f,
+                        MaxArc = Mathf.PI * 0.3f
                     },
                     Center = new Vector2(hit.point.x, hit.point.z),
                     Speed = 5f,
@@ -142,22 +142,22 @@ public class CreateRadialPlane : MonoBehaviour {
                     UnitWaveAmplitude = 1f,
                     Wavelength = 0.5f
                 });
-                //WaveField.forceMgr.Regions.Add(new WaveField.RadialWaveForceRegion()
-                //{
-                //    AnnularRegion = new WaveField.Annulus2()
-                //    {
-                //        Center = new Vector2(hit.point.x, hit.point.z),
-                //        InnerRadius = 2f,
-                //        OuterRadius = 4f,
-                //        MinArc = Mathf.PI * (2f - 0.3f),
-                //        MaxArc = Mathf.PI * (2f - 0.2f)
-                //    },
-                //    Center = new Vector2(hit.point.x, hit.point.z),
-                //    Speed = 5f,
-                //    UnitAmplitude = 2.4f,
-                //    UnitWaveAmplitude = 1f,
-                //    Wavelength = 0.5f
-                //});
+                WaveField.forceMgr.Regions.Add(new WaveField.RadialWaveForceRegion()
+                {
+                    AnnularRegion = new WaveField.Annulus2()
+                    {
+                        Center = new Vector2(hit.point.x, hit.point.z),
+                        InnerRadius = 2f,
+                        OuterRadius = 4f,
+                        MinArc = Mathf.PI * (2f - 0.3f),
+                        MaxArc = Mathf.PI * (2f - 0.2f)
+                    },
+                    Center = new Vector2(hit.point.x, hit.point.z),
+                    Speed = 5f,
+                    UnitAmplitude = 2.4f,
+                    UnitWaveAmplitude = 1f,
+                    Wavelength = 0.5f
+                });
             }
         }
     }
