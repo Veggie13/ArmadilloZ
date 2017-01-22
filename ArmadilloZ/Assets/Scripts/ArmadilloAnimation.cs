@@ -19,66 +19,30 @@ public class ArmadilloAnimation : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        if (Input.GetAxis("L_XAxis_" + player) < -0.2)
+        Vector2 facing = new Vector2(Input.GetAxis("L_XAxis_" + player), Input.GetAxis("L_YAxis_" + player));
+        bool rolling = Input.GetButton("X_" + player);
+
+        float faceBearingGrad = (Mathf.Atan2(facing.y, facing.x) / Mathf.PI + 2f) % 2f;
+
+        animator.SetBool("IsRolling", rolling);
+
+        if (facing.magnitude > 0.1f)
         {
-            if (Input.GetAxis("L_YAxis_" + player) > 0.2)
+            int faceDirection;
+            if (rolling)
             {
-                // Top right
-                animator.SetInteger("DirectionState", 1);
-            }
-            else if (Input.GetAxis("L_YAxis_" + player) < -0.2)
-            {
-                // Bottom right
-                animator.SetInteger("DirectionState", 7);
+                var dirs = new[] { 0, 7, 5, 4, 7, 5 };
+                faceDirection = dirs[Mathf.RoundToInt(3f * faceBearingGrad + 6f) % 6];
             }
             else
             {
-                // Right
-                animator.SetInteger("DirectionState", 0);
+                var dirs = new[] { 3, 2, 1, 7, 6, 5 };
+                faceDirection = dirs[(Mathf.RoundToInt(3f * (faceBearingGrad - 0.5f) + 6f) + 1) % 6];
             }
-        }
-        else if (Input.GetAxis("L_XAxis_" + player) > 0.2)
-        {
-            if (Input.GetAxis("L_YAxis_" + player) > 0.2)
-            {
-                // Top left
-                animator.SetInteger("DirectionState", 3);
-            }
-            else if (Input.GetAxis("L_YAxis_" + player) < -0.2)
-            {
-                // Bottom left
-                animator.SetInteger("DirectionState", 5);
-            }
-            else
-            {
-                // Left
-                animator.SetInteger("DirectionState", 4);
-            }
-        }
-        else
-        {
-            if (Input.GetAxis("L_YAxis_" + player) > 0.2)
-            {
-                // Top
-                animator.SetInteger("DirectionState", 2);
-            }
-            else if (Input.GetAxis("L_YAxis_" + player) < -0.2)
-            {
-                // Bottom
-                animator.SetInteger("DirectionState", 6);
-            }
+            animator.SetInteger("DirectionState", faceDirection);
         }
 
-        if (Input.GetButton("X_" + player))
-        {
-            animator.SetBool("IsRolling", true);
-        }
-        else
-        {
-            animator.SetBool("IsRolling", false);
-        }
-
-        if (rb.velocity.magnitude < 0.5)
+        if (facing.magnitude < 0.2)
         {
             animator.SetBool("IsIdle", true);
         }
