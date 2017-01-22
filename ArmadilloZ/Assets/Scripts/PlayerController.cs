@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
         if (rb.position.y < -20)
         {
             rb.velocity = new Vector3(0.0f, 0.0f, 0.0f);
-            rb.position = new Vector3(0.0f, 1.0f, 0.0f);
+            rb.position = new Vector3(0.0f, 1.2f, 0.0f);
         }
 
         float moveXAxis = Input.GetAxis("L_XAxis_" + player);
