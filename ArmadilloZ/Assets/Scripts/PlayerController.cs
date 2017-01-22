@@ -21,8 +21,8 @@ public class PlayerController : MonoBehaviour
         WaveField.forceMgr.Objects.Add(new WaveField.Movable()
         {
             Body = rb,
-            DragCoefficient = 0.7f,
-            StopSpeed = 1f
+            DragCoefficient = 0.5f,
+            StopSpeed = 0.1f
         });
     }
 
@@ -52,6 +52,11 @@ public class PlayerController : MonoBehaviour
             else
             {
                 speed = walkSpeed;
+            }
+
+            if (Input.GetButton("Y_" + player))
+            {
+                rb.velocity = new Vector3(0.0f, 0.0f, 0.0f);
             }
         }
         else
