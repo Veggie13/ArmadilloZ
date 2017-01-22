@@ -32,9 +32,9 @@ public class ArmadilloAnimation : MonoBehaviour
         {
             if (rolling)
             {
-                var dirs = new[] { 0, 7, 5, 4, 7, 5 };
-                faceDirection = dirs[Mathf.RoundToInt(3f * faceBearingGrad + 6f) % 6];
-                //faceDirection = Mathf.RoundToInt(4f * faceBearingGrad + 8f) % 8;
+                //var dirs = new[] { 0, 7, 5, 4, 7, 5 };
+                //faceDirection = dirs[Mathf.RoundToInt(3f * faceBearingGrad + 6f) % 6];
+                faceDirection = Mathf.RoundToInt(-4f * faceBearingGrad + 8f) % 8;
             }
             else
             {
