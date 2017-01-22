@@ -99,6 +99,11 @@ public class PlayerController : MonoBehaviour
             {
                 speed = walkSpeed;
             }
+
+            if (Input.GetButton("Y_" + player))
+            {
+                rb.velocity = new Vector3(0.0f, 0.0f, 0.0f);
+            }
         }
         else
         {
