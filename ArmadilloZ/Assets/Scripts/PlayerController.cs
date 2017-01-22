@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     private AudioSource feetAudio;
     private AudioSource rollAudio;
     private AudioSource poundAudio;
+    private AudioSource blastAudio;
     private Rigidbody rb;
     private bool isGrounded = true;
     private bool isPounding = false;
@@ -27,6 +28,7 @@ public class PlayerController : MonoBehaviour
         feetAudio = GameObject.Find("Feet" + player).GetComponent<AudioSource>();
         rollAudio = GameObject.Find("Roll" + player).GetComponent<AudioSource>();
         poundAudio = GameObject.Find("Pound" + player).GetComponent<AudioSource>();
+        blastAudio = GameObject.Find("Blast" + player).GetComponent<AudioSource>();
         speed = walkSpeed;
         lastFacing = new Vector2(0f, -1f);
         movable = new WaveField.Movable()
@@ -71,7 +73,7 @@ public class PlayerController : MonoBehaviour
         {
             if (Input.GetButton("A_" + player))
             {
-                moveYAxis = 300.0f;
+                moveYAxis = 220.0f;
                 isGrounded = false;
             }
 
@@ -144,11 +146,12 @@ public class PlayerController : MonoBehaviour
                         Center = new Vector2(rb.position.x, rb.position.z),
                         Speed = 4f,
                         UnitAmplitude = 4f,
-                        UnitWaveAmplitude = 0.125f,
+                        UnitWaveAmplitude = 0.25f,
                         Wavelength = 0.25f,
                         Attenuation = 0.5f,
                         MaxRadius = 5f
                     });
+                    blastAudio.Play();
                 }
 
                 rollAudio.enabled = false;
@@ -162,7 +165,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if (Input.GetButton("B_" + player))
+            if (Input.GetButtonDown("B_" + player))
             {
                 moveXAxis = 0.0f;
                 moveYAxis = -500.0f;
