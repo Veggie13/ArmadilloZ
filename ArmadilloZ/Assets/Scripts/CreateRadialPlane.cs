@@ -94,13 +94,6 @@ public class CreateRadialPlane : MonoBehaviour {
 		mesh.RecalculateNormals();
 		//transform.gameObject.AddComponent<MeshCollider>();
 		transform.GetComponent<MeshCollider>().sharedMesh = mesh;
-
-        WaveField.forceMgr.Objects.Add(new WaveField.Movable()
-        {
-            Body = GameObject.Find("Sphere").GetComponent<Rigidbody>(),
-            DragCoefficient = 0.7f,
-            StopSpeed = 1f
-        });
     }
 
 	void Update () {

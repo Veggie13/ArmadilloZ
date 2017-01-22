@@ -128,6 +128,8 @@ public static class WaveField {
         public float Speed;
         public float UnitAmplitude;
         public float UnitWaveAmplitude;
+        public float Attenuation;
+        public float MaxRadius;
 
         public override Region2 Region
         {
@@ -158,7 +160,9 @@ public static class WaveField {
         {
             AnnularRegion.OuterRadius += Speed * dt;
             AnnularRegion.InnerRadius += Speed * dt;
-            return (AnnularRegion.OuterRadius < 30f);
+            UnitAmplitude *= Mathf.Pow(Attenuation, dt);
+            UnitWaveAmplitude *= Mathf.Pow(Attenuation, dt);
+            return (AnnularRegion.OuterRadius < MaxRadius);
         }
 
         public override float GetWaveValue(Vector2 pos)
