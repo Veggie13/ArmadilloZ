@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -183,6 +184,11 @@ public class PlayerController : MonoBehaviour
         Vector3 force = new Vector3(diffPlaneVelocity.x * 4f, moveYAxis, diffPlaneVelocity.y * 4f);
 
         rb.AddForce(force, ForceMode.Acceleration);
+
+        if (Input.GetButtonDown("Back_1"))
+        {
+            Application.Quit();
+        }
     }
 
     void OnCollisionEnter(Collision collision)

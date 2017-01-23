@@ -3,6 +3,7 @@ using System.Collections.Generic;
 //using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Menus : MonoBehaviour {
     public Canvas startMenu;
@@ -63,6 +64,7 @@ public class Menus : MonoBehaviour {
         quitMenu.enabled = false;
         startMenu.enabled = false;
 		background.enabled = false;
+        SceneManager.LoadScene("ArmadilloZ");
     }
 
     public void Quit() {
